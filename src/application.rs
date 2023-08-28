@@ -18,7 +18,7 @@ use crate::queue::Queue;
 use crate::spotify::{PlayerEvent, Spotify};
 use crate::ui::create_cursive;
 use crate::{authentication, ui};
-use crate::{command, queue, spotify};
+use crate::{command, scrobbler, queue, spotify};
 
 #[cfg(feature = "mpris")]
 use crate::mpris::{self, MprisManager};
@@ -79,6 +79,7 @@ pub struct Application {
     ipc: IpcSocket,
     /// The object to render to the terminal.
     cursive: CursiveRunner<Cursive>,
+    scrobbler_manager: scrobbler::ScrobblerManager,
 }
 
 impl Application {
@@ -151,6 +152,11 @@ impl Application {
         cmd_manager.register_all();
         cmd_manager.register_keybindings(&mut cursive);
 
+        let scrobbler_manager = scrobbler::ScrobblerManager::new(
+            configuration.clone(),
+            library.clone(),
+        );
+
         cursive.set_user_data(Rc::new(UserDataInner { cmd: cmd_manager }));
 
         let search =
@@ -198,6 +204,7 @@ impl Application {
             #[cfg(unix)]
             ipc,
             cursive,
+            scrobbler_manager,
         })
     }
 
@@ -227,6 +234,9 @@ impl Application {
 
                         #[cfg(feature = "mpris")]
                         self.mpris_manager.update();
+
+                        let elapsed = self.spotify.get_current_progress();
+                        self.scrobbler_manager.update_scrobbler(state.clone(), self.queue.get_current(), elapsed);
 
                         #[cfg(unix)]
                         self.ipc.publish(&state, self.queue.get_current());

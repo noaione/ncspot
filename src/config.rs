@@ -100,6 +100,7 @@ pub struct ConfigValues {
     pub library_tabs: Option<Vec<LibraryTab>>,
     pub hide_display_names: Option<bool>,
     pub credentials: Option<Credentials>,
+    pub scrobbling: Option<Scrobbling>,
 }
 
 /// Commands used to obtain user credentials automatically.
@@ -133,6 +134,21 @@ pub struct ConfigTheme {
     pub search_match: Option<String>,
 }
 
+// Scrobbling configuration
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Scrobbling {
+    pub enabled: Option<bool>,
+    pub discord_enabled: Option<bool>,
+
+    pub lastfm_username: Option<String>,
+    pub lastfm_password: Option<String>,
+    pub lastfm_api_key: Option<String>,
+    pub lastfm_api_secret: Option<String>,
+
+    pub discord_format_state: Option<String>,
+    pub discord_format_details: Option<String>,
+}
+
 /// The ordering that is used when representing a playlist.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SortingOrder {
@@ -159,6 +175,8 @@ pub struct UserState {
     pub playlist_orders: HashMap<String, SortingOrder>,
     pub cache_version: u16,
     pub playback_state: PlaybackState,
+    pub lastfm_session_user: Option<String>,
+    pub lastfm_session_key: Option<String>,
 }
 
 impl Default for UserState {
@@ -171,6 +189,8 @@ impl Default for UserState {
             playlist_orders: HashMap::new(),
             cache_version: 0,
             playback_state: PlaybackState::Default,
+            lastfm_session_user: None,
+            lastfm_session_key: None,
         }
     }
 }

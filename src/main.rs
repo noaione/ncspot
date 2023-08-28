@@ -22,6 +22,7 @@ mod library;
 mod model;
 mod panic;
 mod queue;
+mod scrobbler;
 mod serialization;
 mod sharing;
 mod spotify;

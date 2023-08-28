@@ -61,6 +61,8 @@ toml = "0.7"
 unicode-width = "0.1.9"
 url = "2.2"
 cursive_buffered_backend = "0.6.1"
+rustfm-scrobble = "1.1.1"
+discord-presence = "0.5.18"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 wl-clipboard-rs = {version = "0.7", optional = true}
